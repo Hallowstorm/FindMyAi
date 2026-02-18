@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Find My AI | Your Intelligent AI Directory</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- GSAP for advanced animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <style>
+        :root {
+            --dark-blue: #020617;
+            --mid-blue: #0f172a;
+            --accent-blue: #3b82f6;
+            --soft-blue: #94a3b8;
+            --white: #f8fafc;
+            --glow-color: rgba(59, 130, 246, 0.6);
+        }
+
+        body {
+            background-color: var(--dark-blue);
+            color: var(--soft-blue);
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            overflow-x: hidden;
+            font-size: 1.5rem; /* Zoomed in for user preference */
+            line-height: 1.6;
+        }
+
+        .bg-glow {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at 50% 50%, #1e3a8a 0%, transparent 70%);
+            opacity: 0.25;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* Static Glowing Navbar */
+        .nav-container {
+            position: relative;
+            z-index: 100;
+        }
+
+        .nav-glass {
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 24px;
+            box-shadow: 0 10px 30px -10px rgba(0,0,0,0.5);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .nav-glass:hover {
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 25px var(--glow-color);
+            background: rgba(15, 23, 42, 0.9);
+        }
+
+        .nav-link {
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            font-weight: 800;
+        }
+
+        .nav-link:hover {
+            color: white;
+        }
+
+        .nav-link.active {
+            color: white;
+        }
+
+        .nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: var(--accent-blue);
+            box-shadow: 0 0 10px var(--accent-blue);
+        }
+
+        /* 3D Button Components */
+        .btn-3d {
+            position: relative;
+            background: #1e3a8a;
+            border: none;
+            border-radius: 12px;
+            padding: 0;
+            cursor: pointer;
+            display: inline-block;
+        }
+
+        .btn-3d-shadow {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            border-radius: 12px;
+            background: rgba(0, 0, 0, 0.2);
+            transform: translateY(2px);
+        }
+
+        .btn-3d-edge {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            border-radius: 12px;
+            background: linear-gradient(to left, #172554 0%, #1e3a8a 100%);
+        }
+
+        .btn-3d-front {
+            display: block;
+            position: relative;
+            padding: 16px 36px;
+            border-radius: 12px;
+            font-size: 1.3rem;
+            font-weight: 900;
+            color: white;
+            background: #2563eb;
+            transform: translateY(-5px);
+            transition: transform 0.2s cubic-bezier(.3, .7, .4, 1);
+        }
+
+        .btn-3d:hover .btn-3d-front { transform: translateY(-7px); }
+        .btn-3d:active .btn-3d-front { transform: translateY(-1px); }
+
+        .btn-3d.secondary .btn-3d-edge { background: #1e293b; }
+        .btn-3d.secondary .btn-3d-front { background: #334155; }
+
+        /* Highlighted Word Design: Glowing Blue YOU */
+        .highlight-you {
+            color: var(--accent-blue);
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            position: relative;
+            display: inline-block;
+            text-shadow: 0 0 20px var(--glow-color), 0 0 40px var(--glow-color);
+        }
+
+        .section-header {
+            letter-spacing: -0.05em;
+            background: linear-gradient(to bottom, #fff 20%, #64748b 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Mural Art & Card Designs */
+        .mural-card {
+            background: linear-gradient(145deg, rgba(15, 23, 42, 0.4), rgba(2, 6, 23, 0.7));
+            border: 1px solid rgba(59, 130, 246, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 48px;
+            padding: 5rem;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .mural-card:hover {
+            border-color: rgba(59, 130, 246, 0.4);
+            transform: translateY(-8px);
+            box-shadow: 0 40px 100px -20px rgba(0,0,0,0.5);
+        }
+
+        .neural-glow-effect {
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            background: var(--glow-color);
+            filter: blur(150px);
+            opacity: 0.15;
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        /* Adoption Puppy Elements */
+        .adoption-tag {
+            background: #ef4444;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            position: absolute;
+            top: 50px;
+            right: 50px;
+            transform: rotate(8deg);
+            box-shadow: 0 10px 20px rgba(239, 68, 68, 0.3);
+            z-index: 10;
+        }
+
+        /* VS Badge Arena Style */
+        .vs-badge {
+            background: linear-gradient(180deg, #3b82f6 0%, #1e3a8a 100%);
+            width: 100px;
+            height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-weight: 900;
+            color: white;
+            font-size: 2rem;
+            border: 8px solid var(--dark-blue);
+            box-shadow: 0 0 40px rgba(59, 130, 246, 0.6);
+            z-index: 20;
+        }
+
+        /* View Control */
+        .page-view {
+            display: none;
+            opacity: 0;
+        }
+
+        .page-view.active {
+            display: block;
+            opacity: 1;
+        }
+
+        /* Form styling */
+        .contact-input {
+            background: rgba(15, 23, 42, 0.8);
+            border: 2px solid rgba(59, 130, 246, 0.2);
+            border-radius: 20px;
+            color: white;
+            padding: 2rem;
+            width: 100%;
+            font-size: 1.4rem;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .contact-input:focus {
+            border-color: var(--accent-blue);
+            background: rgba(15, 23, 42, 1);
+            box-shadow: 0 0 30px rgba(59, 130, 246, 0.2);
+        }
+
+        .contact-label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.3em;
+            color: var(--accent-blue);
+            margin-bottom: 1rem;
+            padding-left: 1rem;
+        }
+
+        /* Neural Mural SVG elements */
+        .neural-node { fill: #3b82f6; filter: drop-shadow(0 0 8px #3b82f6); }
+        .neural-path { stroke: #1e3a8a; stroke-dasharray: 1000; animation: dash 10s linear infinite; }
+        @keyframes dash { from { stroke-dashoffset: 1000; } to { stroke-dashoffset: 0; } }
+
+        /* Search Bar High Contrast */
+        .search-container {
+            padding: 5px;
+            background: linear-gradient(90deg, #3b82f6, #6366f1, #3b82f6);
+            border-radius: 35px;
+            box-shadow: 0 25px 60px -15px rgba(0,0,0,0.6);
+        }
+
+        ::-webkit-scrollbar { width: 14px; }
+        ::-webkit-scrollbar-track { background: var(--dark-blue); }
+        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 7px; border: 3px solid var(--dark-blue); }
+        ::-webkit-scrollbar-thumb:hover { background: var(--accent-blue); }
+
+        #mobile-menu-overlay {
+            position: fixed; inset: 0; background: rgba(2, 6, 23, 0.98); 
+            backdrop-filter: blur(30px); z-index: 500; display: none;
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+
+    <div class="bg-glow" id="parallax-bg"></div>
+
+    <!-- Mobile Menu -->
+    <div id="mobile-menu-overlay" class="flex flex-col items-center justify-center gap-16 text-center">
+        <button onclick="toggleMobileMenu()" class="absolute top-12 right-12 text-white text-5xl"><i class="fas fa-times"></i></button>
+        <div onclick="showPage('home'); toggleMobileMenu();" class="text-5xl font-black text-white">Home</div>
+        <div onclick="showPage('vision'); toggleMobileMenu();" class="text-5xl font-black text-white">Vision</div>
+        <div onclick="showPage('battle'); toggleMobileMenu();" class="text-5xl font-black text-white">AI 1v1</div>
+        <div onclick="showPage('contact'); toggleMobileMenu();" class="text-5xl font-black text-white">Contact</div>
+    </div>
+
+    <!-- Navbar -->
+    <div class="max-w-7xl mx-auto px-6 nav-container">
+        <header class="py-12">
+            <nav class="nav-glass px-12 py-8 flex justify-between items-center">
+                <div onclick="showPage('home')" class="flex items-center gap-6 group cursor-pointer">
+                    <div class="w-16 h-16 bg-blue-600 rounded-3xl flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform">
+                        <i class="fas fa-brain text-white text-3xl"></i>
+                    </div>
+                    <div class="flex flex-col leading-tight">
+                        <span class="text-4xl font-black text-white tracking-tighter">FIND MY AI</span>
+                        <span class="text-xs uppercase tracking-[0.6em] text-blue-400 font-bold">Hallow Productions</span>
+                    </div>
+                </div>
+
+                <div class="hidden lg:flex gap-16 text-sm font-black tracking-[0.2em] uppercase items-center">
+                    <div onclick="showPage('home')" class="nav-link active" id="nav-home">Home</div>
+                    <div onclick="showPage('vision')" class="nav-link" id="nav-vision">Vision</div>
+                    <div onclick="showPage('battle')" class="nav-link" id="nav-battle">AI 1v1</div>
+                    <button onclick="showPage('contact')" class="btn-3d">
+                        <span class="btn-3d-shadow"></span>
+                        <span class="btn-3d-edge"></span>
+                        <span class="btn-3d-front text-sm">Contact Us</span>
+                    </button>
+                </div>
+
+                <button onclick="toggleMobileMenu()" class="lg:hidden text-white text-4xl"><i class="fas fa-bars"></i></button>
+            </nav>
+        </header>
+    </div>
+
+    <main class="max-w-7xl mx-auto pt-24 px-8 pb-40">
+        
+        <!-- HOME PAGE VIEW -->
+        <div id="view-home" class="page-view active">
+            <section class="text-center mb-64">
+                <h1 class="text-6xl md:text-8xl font-black text-white mb-16 leading-[1.1] max-w-6xl mx-auto tracking-tight">
+                    Find the AI to help <span class="highlight-you">you</span> do the heavy lifting so you can have time to be <span class="highlight-you">you</span>.
+                </h1>
+
+                <div class="search-container max-w-4xl mx-auto mb-20">
+                    <div class="bg-slate-950 rounded-[30px] p-4 flex flex-col md:flex-row gap-4">
+                        <div class="flex-1 flex items-center px-8">
+                            <i class="fas fa-search text-blue-500 text-3xl mr-6"></i>
+                            <input type="text" placeholder="What task do you want to offload today?" class="bg-transparent border-none outline-none text-white w-full py-6 text-2xl placeholder:text-slate-700">
+                        </div>
+                        <button class="btn-3d">
+                            <span class="btn-3d-shadow"></span>
+                            <span class="btn-3d-edge"></span>
+                            <span class="btn-3d-front px-16 py-7 text-2xl">Find Match</span>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Quick Look Section -->
+            <section class="grid md:grid-cols-2 gap-16">
+                <div class="mural-card bg-blue-600/10" onclick="showPage('vision')">
+                    <h3 class="text-4xl font-black text-white mb-6 uppercase">Our Vision</h3>
+                    <p class="text-slate-400 text-xl mb-10">AI adoption should feel like bringing home a new companion, not reading a manual.</p>
+                    <span class="text-blue-500 font-bold uppercase tracking-widest flex items-center gap-3">Learn More <i class="fas fa-arrow-right"></i></span>
+                </div>
+                <div class="mural-card bg-indigo-600/10" onclick="showPage('battle')">
+                    <h3 class="text-4xl font-black text-white mb-6 uppercase">Battle Arena</h3>
+                    <p class="text-slate-400 text-xl mb-10">Pin the world's most powerful models against each other and see who wins.</p>
+                    <span class="text-indigo-500 font-bold uppercase tracking-widest flex items-center gap-3">Enter Arena <i class="fas fa-arrow-right"></i></span>
+                </div>
+            </section>
+        </div>
+
+        <!-- VISION PAGE VIEW -->
+        <div id="view-vision" class="page-view">
+            <section class="mb-40 text-center">
+                <h2 class="section-header text-7xl md:text-9xl font-black mb-10 uppercase tracking-tighter">The <span class="text-blue-500">Soul</span> of AI</h2>
+                <p class="text-slate-400 text-3xl max-w-4xl mx-auto font-medium">Finding the right AI isn't a search—it's an adoption.</p>
+            </section>
+
+            <!-- Mural 1: The Puppy Metaphor -->
+            <div class="mural-card mb-24 group">
+                <div class="adoption-tag">Perfect Companion</div>
+                <div class="neural-glow-effect -top-20 -left-20"></div>
+                <div class="grid lg:grid-cols-2 gap-24 items-center">
+                    <div class="relative">
+                        <div class="w-full aspect-square bg-slate-900 rounded-[60px] flex items-center justify-center border-4 border-blue-500/20 shadow-[0_0_80px_rgba(59,130,246,0.2)] overflow-hidden">
+                            <i class="fas fa-dog text-[14rem] text-blue-500 drop-shadow-[0_0_50px_rgba(59,130,246,0.6)]"></i>
+                            <div class="absolute inset-0 bg-gradient-to-tr from-blue-600/10 to-transparent"></div>
+                        </div>
+                        <!-- SVG Mural Accents -->
+                        <svg class="absolute -bottom-10 -right-10 w-48 h-48 opacity-30" viewBox="0 0 200 200">
+                            <path class="neural-path" d="M10,100 Q100,10 190,100" fill="none" stroke-width="4"/>
+                            <circle class="neural-node" cx="10" cy="100" r="8"/>
+                            <circle class="neural-node" cx="190" cy="100" r="8"/>
+                        </svg>
+                    </div>
+                    <div class="space-y-10">
+                        <h3 class="text-5xl font-black text-white uppercase italic leading-tight">Adopting Your Intelligence</h3>
+                        <p class="text-slate-300 text-2xl">
+                            You wouldn't buy a Greyhound if you lived in a studio apartment and wanted a lap dog. AI is the same. Some models are built for raw speed and data-crunching, while others are nurturing, creative, and remarkably human.
+                        </p>
+                        <div class="grid grid-cols-2 gap-8">
+                            <div class="p-6 bg-slate-950/50 rounded-3xl border border-white/5">
+                                <i class="fas fa-heart text-blue-500 text-3xl mb-4"></i>
+                                <h4 class="text-white font-black">LOYALTY</h4>
+                                <p class="text-sm text-slate-500">Models that learn your specific style and stay consistent.</p>
+                            </div>
+                            <div class="p-6 bg-slate-950/50 rounded-3xl border border-white/5">
+                                <i class="fas fa-bolt text-blue-500 text-3xl mb-4"></i>
+                                <h4 class="text-white font-black">DRIVE</h4>
+                                <p class="text-sm text-slate-500">Fast, efficient workers that clear your task list in seconds.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mural 2: AI for Everyone -->
+            <div class="mural-card mb-24 bg-blue-600/5">
+                <div class="text-center max-w-5xl mx-auto">
+                    <h3 class="text-6xl font-black text-white mb-12 tracking-tighter uppercase">AI for <span class="text-blue-500">Everyone</span></h3>
+                    <div class="grid md:grid-cols-3 gap-12 text-left">
+                        <div class="space-y-6 p-10 bg-slate-950 rounded-[40px] border border-blue-500/10">
+                            <div class="w-16 h-16 bg-blue-600/20 rounded-2xl flex items-center justify-center">
+                                <i class="fas fa-palette text-blue-500 text-3xl"></i>
+                            </div>
+                            <h4 class="text-3xl font-bold text-white">THE ARTIST</h4>
+                            <p class="text-slate-400 text-lg">Finding the muse that visualizes your wildest abstractions.</p>
+                        </div>
+                        <div class="space-y-6 p-10 bg-slate-950 rounded-[40px] border border-blue-500/10">
+                            <div class="w-16 h-16 bg-blue-600/20 rounded-2xl flex items-center justify-center">
+                                <i class="fas fa-calculator text-blue-500 text-3xl"></i>
+                            </div>
+                            <h4 class="text-3xl font-bold text-white">THE ANALYST</h4>
+                            <p class="text-slate-400 text-lg">A logic machine that finds the signal in the infinite noise.</p>
+                        </div>
+                        <div class="space-y-6 p-10 bg-slate-950 rounded-[40px] border border-blue-500/10">
+                            <div class="w-16 h-16 bg-blue-600/20 rounded-2xl flex items-center justify-center">
+                                <i class="fas fa-feather-alt text-blue-500 text-3xl"></i>
+                            </div>
+                            <h4 class="text-3xl font-bold text-white">THE SCRIBE</h4>
+                            <p class="text-slate-400 text-lg">Your ghostwriter who knows your voice better than you do.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- BATTLE ARENA VIEW -->
+        <div id="view-battle" class="page-view">
+            <section class="mb-40">
+                <div class="text-center mb-24">
+                    <h2 class="section-header text-7xl font-black mb-6 uppercase tracking-tighter">AI 1v1 Arena</h2>
+                    <p class="text-slate-400 text-2xl">The ultimate testing ground for neural supremacy.</p>
+                </div>
+
+                <div class="relative max-w-6xl mx-auto">
+                    <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 hidden lg:flex vs-badge">VS</div>
+                    
+                    <div class="grid lg:grid-cols-2 gap-20" id="battle-grid">
+                        <div class="mural-card p-12 space-y-8">
+                            <label class="contact-label">Contender A</label>
+                            <input type="text" id="ai-1" placeholder="e.g. ChatGPT-4o" class="contact-input text-3xl font-bold">
+                        </div>
+                        <div class="mural-card p-12 space-y-8">
+                            <label class="contact-label">Contender B</label>
+                            <input type="text" id="ai-2" placeholder="e.g. Claude 3.5 Sonnet" class="contact-input text-3xl font-bold">
+                        </div>
+                    </div>
+
+                    <div id="battle-results" class="hidden mt-20 mural-card border-blue-500 bg-blue-600/10 p-20">
+                        <div class="flex flex-col md:flex-row items-center gap-16">
+                            <div class="flex-1 text-center md:text-left">
+                                <h4 class="text-blue-500 font-black tracking-widest uppercase mb-4">Neural Verdict</h4>
+                                <h3 id="winner-name" class="text-6xl font-black text-white mb-8 tracking-tighter uppercase"></h3>
+                                <div id="verdict-reasons" class="space-y-6 text-slate-300 text-2xl italic"></div>
+                            </div>
+                            <div class="w-72 h-72 rounded-full border-[12px] border-blue-500 flex flex-col items-center justify-center bg-slate-950 shadow-[0_0_60px_rgba(59,130,246,0.5)]">
+                                <span class="text-6xl font-black text-white">96%</span>
+                                <span class="text-xs font-bold text-blue-400 tracking-widest">CONFIDENCE</span>
+                            </div>
+                        </div>
+                        <button onclick="resetArena()" class="mt-16 text-blue-500 font-black uppercase tracking-widest flex items-center gap-4 hover:text-white transition-colors">
+                            <i class="fas fa-redo"></i> Reset Arena
+                        </button>
+                    </div>
+
+                    <div class="text-center mt-20" id="arena-btn-container">
+                        <button class="btn-3d" onclick="runBattle()">
+                            <span class="btn-3d-shadow"></span>
+                            <span class="btn-3d-edge"></span>
+                            <span class="btn-3d-front px-24 py-10 text-4xl italic">INITIATE BATTLE</span>
+                        </button>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- CONTACT PAGE VIEW -->
+        <div id="view-contact" class="page-view">
+            <section class="max-w-4xl mx-auto">
+                <h2 class="section-header text-7xl font-black mb-16 text-center uppercase">Secure Uplink</h2>
+                <div class="mural-card p-20">
+                    <form onsubmit="event.preventDefault(); document.getElementById('success-msg').classList.remove('hidden');" class="space-y-12">
+                        <div id="success-msg" class="hidden text-center p-12 bg-blue-600 rounded-3xl text-white mb-10">
+                            <i class="fas fa-check-circle text-6xl mb-6"></i>
+                            <h3 class="text-4xl font-black">TRANSMISSION RECEIVED</h3>
+                            <p class="text-xl mt-4">The architects will respond shortly.</p>
+                        </div>
+                        <div class="grid md:grid-cols-2 gap-10">
+                            <div>
+                                <label class="contact-label">Full Name</label>
+                                <input type="text" placeholder="John Doe" class="contact-input">
+                            </div>
+                            <div>
+                                <label class="contact-label">Email</label>
+                                <input type="email" placeholder="john@company.ai" class="contact-input">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="contact-label">Transmission Data</label>
+                            <textarea rows="5" placeholder="Your inquiry details..." class="contact-input resize-none"></textarea>
+                        </div>
+                        <button class="btn-3d w-full">
+                            <span class="btn-3d-shadow"></span>
+                            <span class="btn-3d-edge"></span>
+                            <span class="btn-3d-front py-8 text-3xl">Send Transmission</span>
+                        </button>
+                    </form>
+                </div>
+            </section>
+        </div>
+
+    </main>
+
+    <footer class="p-32 border-t border-blue-500/10 bg-slate-950/50">
+        <div class="max-w-7xl mx-auto flex flex-col items-center gap-12">
+            <div class="flex items-center gap-6">
+                <div class="w-14 h-14 bg-blue-600 rounded-2xl flex items-center justify-center">
+                    <i class="fas fa-brain text-white"></i>
+                </div>
+                <span class="text-3xl font-black text-white">FIND MY AI</span>
+            </div>
+            <div class="flex gap-12 text-4xl">
+                <i class="fab fa-twitter hover:text-blue-500 cursor-pointer transition-colors"></i>
+                <i class="fab fa-discord hover:text-blue-500 cursor-pointer transition-colors"></i>
+                <i class="fab fa-github hover:text-blue-500 cursor-pointer transition-colors"></i>
+            </div>
+            <p class="text-blue-500/30 text-xs font-black uppercase tracking-[1em] mt-10">&copy; 2026 HALLOW PRODUCTIONS</p>
+        </div>
+    </footer>
+
+    <script>
+        gsap.registerPlugin(ScrollTrigger);
+
+        // Navigation Controller
+        function showPage(pageId) {
+            const views = document.querySelectorAll('.page-view');
+            const navLinks = document.querySelectorAll('.nav-link');
+            
+            navLinks.forEach(link => link.classList.remove('active'));
+            const activeLink = document.getElementById(`nav-${pageId}`);
+            if (activeLink) activeLink.classList.add('active');
+
+            views.forEach(view => {
+                if (view.id === `view-${pageId}`) {
+                    gsap.to(view, { opacity: 0, y: 30, duration: 0.2, onComplete: () => {
+                        views.forEach(v => v.classList.remove('active'));
+                        view.classList.add('active');
+                        gsap.fromTo(view, { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.8, ease: "expo.out" });
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }});
+                }
+            });
+        }
+
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu-overlay');
+            const isOpen = menu.style.display === 'flex';
+            menu.style.display = isOpen ? 'none' : 'flex';
+            if (!isOpen) {
+                gsap.from("#mobile-menu-overlay div", { y: 100, opacity: 0, stagger: 0.1, duration: 0.8, ease: "back.out(1.7)" });
+            }
+        }
+
+        function runBattle() {
+            const ai1 = document.getElementById('ai-1').value || 'Contender A';
+            const ai2 = document.getElementById('ai-2').value || 'Contender B';
+            
+            const results = document.getElementById('battle-results');
+            const winnerTxt = document.getElementById('winner-name');
+            const reasonsDiv = document.getElementById('verdict-reasons');
+            
+            gsap.to("#arena-btn-container", { opacity: 0, y: 30, duration: 0.5 });
+            
+            const winner = Math.random() > 0.5 ? ai1 : ai2;
+            winnerTxt.innerText = winner;
+            
+            const reasons = [
+                "Advanced reasoning capabilities in zero-shot scenarios.",
+                "Lower latency in high-density computation clusters.",
+                "Superior creative synthesis of disparate data points.",
+                "Better alignment with human-centric safety protocols."
+            ];
+            
+            reasonsDiv.innerHTML = reasons.map(r => `<div class="flex items-center gap-6"><i class="fas fa-bolt text-blue-500"></i><span>${r}</span></div>`).join('');
+            
+            results.classList.remove('hidden');
+            gsap.fromTo(results, { opacity: 0, scale: 0.95 }, { opacity: 1, scale: 1, duration: 1, ease: "elastic.out(1, 0.75)" });
+        }
+
+        function resetArena() {
+            const results = document.getElementById('battle-results');
+            gsap.to(results, { opacity: 0, scale: 0.9, duration: 0.5, onComplete: () => {
+                results.classList.add('hidden');
+                gsap.to("#arena-btn-container", { opacity: 1, y: 0, duration: 0.5 });
+                document.getElementById('ai-1').value = '';
+                document.getElementById('ai-2').value = '';
+            }});
+        }
+
+        // Parallax & Effects
+        window.addEventListener('mousemove', (e) => {
+            const x = (e.clientX / window.innerWidth - 0.5) * 60;
+            const y = (e.clientY / window.innerHeight - 0.5) * 60;
+            gsap.to("#parallax-bg", { x: x, y: y, duration: 3, ease: "power2.out" });
+        });
+
+        window.addEventListener('DOMContentLoaded', () => {
+            gsap.from(".nav-glass", { y: -100, opacity: 0, duration: 1.5, ease: "expo.out" });
+        });
+    </script>
+</body>
+</html>
