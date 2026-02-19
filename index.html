@@ -2,13 +2,15 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="description" content="Find My AI - The intelligent directory to find the perfect AI companion.">
     <title>Find My AI | Your Intelligent AI Directory</title>
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
     <style>
         :root {
             --dark-blue: #020617;
@@ -17,8 +19,11 @@
             --soft-blue: #94a3b8;
             --white: #f8fafc;
             --glow-color: rgba(59, 130, 246, 0.4);
+            --neon-bloom: 0 0 25px rgba(59, 130, 246, 0.6);
         }
 
+        /* Reset & Base */
+        * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
         body {
             background-color: var(--dark-blue);
             color: var(--soft-blue);
@@ -28,38 +33,42 @@
             line-height: 1.6;
         }
 
+        /* Large Zoom Preference */
         @media (min-width: 1024px) {
             body { font-size: 1.45rem; }
         }
 
-        /* Background Effects */
+        /* High-Intensity Background Glow */
         .bg-glow {
             position: fixed;
             top: -10%; left: -10%; width: 120%; height: 120%;
-            background: radial-gradient(circle at 50% 50%, #1e3a8a 0%, transparent 60%);
-            opacity: 0.15;
+            background: 
+                radial-gradient(circle at 50% 50%, #1e3a8a 0%, transparent 60%),
+                radial-gradient(circle at 10% 10%, #3b82f6 0%, transparent 30%);
+            opacity: 0.2;
             z-index: -1;
             pointer-events: none;
+            filter: blur(60px);
         }
 
         /* Navbar Styling */
         .nav-glass {
             background: rgba(15, 23, 42, 0.7);
-            backdrop-filter: blur(20px);
+            backdrop-filter: blur(25px);
             border: 1px solid rgba(59, 130, 246, 0.15);
             border-radius: 24px;
             box-shadow: 0 20px 50px -12px rgba(0,0,0,0.5);
+            transition: transform 0.3s ease;
         }
 
         .nav-link {
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
             position: relative;
             font-weight: 800;
             color: #94a3b8;
         }
-
-        .nav-link:hover { color: white; }
+        .nav-link:hover { color: white; transform: translateY(-2px); }
         .nav-link.active { color: white; }
         .nav-link.active::after {
             content: '';
@@ -69,11 +78,11 @@
             width: 100%;
             height: 3px;
             background: var(--accent-blue);
-            box-shadow: 0 0 15px var(--accent-blue);
+            box-shadow: var(--neon-bloom);
             border-radius: 2px;
         }
 
-        /* Animated Hamburger */
+        /* Burger Menu Trigger */
         .menu-btn {
             width: 60px;
             height: 60px;
@@ -83,38 +92,35 @@
             cursor: pointer;
             z-index: 1001;
             background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.2);
             border-radius: 18px;
             transition: 0.3s;
         }
 
-        .menu-btn:hover { background: rgba(59, 130, 246, 0.2); }
-
         .hamburger-inner {
-            width: 30px;
+            width: 28px;
             height: 2px;
             background: white;
             position: relative;
             transition: background 0.1s 0.2s ease;
         }
-
         .hamburger-inner::before, .hamburger-inner::after {
             content: "";
-            width: 30px;
+            width: 28px;
             height: 2px;
             background: white;
             position: absolute;
             left: 0;
             transition: transform 0.3s 0.1s ease;
         }
-
-        .hamburger-inner::before { top: -10px; }
-        .hamburger-inner::after { top: 10px; }
+        .hamburger-inner::before { top: -8px; }
+        .hamburger-inner::after { top: 8px; }
 
         .menu-btn.active .hamburger-inner { background: transparent; }
-        .menu-btn.active .hamburger-inner::before { transform: translateY(10px) rotate(45deg); }
-        .menu-btn.active .hamburger-inner::after { transform: translateY(-10px) rotate(-45deg); }
+        .menu-btn.active .hamburger-inner::before { transform: translateY(8px) rotate(45deg); }
+        .menu-btn.active .hamburger-inner::after { transform: translateY(-8px) rotate(-45deg); }
 
-        /* Liquid Mobile Menu Overlay */
+        /* Mobile Overlay - PRECISE SCALING */
         #mobile-menu-overlay {
             position: fixed;
             inset: 0;
@@ -128,7 +134,7 @@
         }
 
         .menu-item {
-            font-size: 5rem;
+            font-size: 2.5rem; /* Specific Mobile Fix */
             font-weight: 950;
             color: white;
             text-transform: uppercase;
@@ -136,12 +142,8 @@
             cursor: pointer;
             line-height: 1;
             position: relative;
-            transition: color 0.3s ease;
-            margin: 10px 0;
-        }
-
-        .menu-item:hover {
-            color: var(--accent-blue);
+            margin: 1.5rem 0;
+            z-index: 10;
         }
 
         .menu-item span {
@@ -149,29 +151,30 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            opacity: 0.05;
-            font-size: 10rem;
+            opacity: 0.03;
+            font-size: 5rem; /* Scaled Ghost Text */
             z-index: -1;
             white-space: nowrap;
             pointer-events: none;
+            color: var(--accent-blue);
         }
 
-        /* 3D Button Style */
+        /* 3D Button Components */
         .btn-3d {
             position: relative;
-            background: #1e3a8a;
+            background: transparent;
             border: none;
-            border-radius: 14px;
-            padding: 0;
             cursor: pointer;
             display: inline-block;
+            transition: filter 0.3s;
         }
+        .btn-3d:hover { filter: brightness(1.1); }
 
         .btn-3d-shadow {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
             border-radius: 14px;
-            background: rgba(0, 0, 0, 0.3);
+            background: rgba(0, 0, 0, 0.4);
             transform: translateY(3px);
         }
 
@@ -185,54 +188,50 @@
         .btn-3d-front {
             display: block;
             position: relative;
-            padding: 14px 28px;
+            padding: 16px 32px;
             border-radius: 14px;
-            font-size: 1rem;
+            font-size: 1.1rem;
             font-weight: 900;
             color: white;
             background: #2563eb;
             transform: translateY(-6px);
-            transition: transform 0.1s cubic-bezier(.3, .7, .4, 1);
+            transition: transform 0.15s cubic-bezier(.3, .7, .4, 1);
+            box-shadow: var(--neon-bloom);
         }
-
-        @media (min-width: 1024px) {
-            .btn-3d-front { padding: 18px 40px; font-size: 1.2rem; transform: translateY(-8px); }
-        }
-
         .btn-3d:active .btn-3d-front { transform: translateY(-2px); }
 
-        /* Card Styles */
+        /* Mural Cards with Tilt Effect */
         .mural-card {
             background: rgba(15, 23, 42, 0.4);
             border: 1px solid rgba(255, 255, 255, 0.05);
             backdrop-filter: blur(20px);
             border-radius: 32px;
-            padding: 2.5rem;
-            transition: transform 0.4s ease, border-color 0.4s ease;
+            padding: 3rem;
+            transition: transform 0.1s ease, border-color 0.4s ease, box-shadow 0.4s ease;
+            position: relative;
+            overflow: hidden;
         }
-
         .mural-card:hover {
-            transform: translateY(-8px);
             border-color: rgba(59, 130, 246, 0.4);
-            background: rgba(15, 23, 42, 0.6);
+            box-shadow: 0 0 40px rgba(59, 130, 246, 0.1);
         }
 
         .highlight-you {
-            color: var(--accent-blue);
+            color: white;
             font-weight: 900;
             text-transform: uppercase;
-            letter-spacing: 0.05em;
-            text-shadow: 0 0 30px var(--glow-color);
+            text-shadow: 0 0 30px var(--accent-blue);
         }
 
-        .page-view {
-            display: none;
-            opacity: 0;
-        }
-
-        .page-view.active {
-            display: block;
-            opacity: 1;
+        /* Battle Arena UI */
+        .vs-badge {
+            background: linear-gradient(180deg, #3b82f6 0%, #1e3a8a 100%);
+            width: 80px; height: 80px;
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 50%;
+            font-weight: 950; color: white;
+            border: 4px solid var(--dark-blue);
+            box-shadow: 0 0 30px rgba(59, 130, 246, 0.5);
         }
 
         .contact-input {
@@ -240,63 +239,60 @@
             border: 2px solid rgba(59, 130, 246, 0.1);
             border-radius: 18px;
             color: white;
-            padding: 1.25rem;
+            padding: 1.5rem;
             width: 100%;
             outline: none;
-            transition: all 0.3s ease;
+            transition: border-color 0.3s, background 0.3s;
+        }
+        .contact-input:focus { border-color: var(--accent-blue); background: rgba(2, 6, 23, 0.8); }
+
+        .page-view { display: none; opacity: 0; }
+        .page-view.active { display: block; opacity: 1; }
+
+        /* Loader */
+        #neural-loader {
+            position: fixed; inset: 0; background: var(--dark-blue);
+            z-index: 5000; display: none; align-items: center; justify-content: center;
+            flex-direction: column;
         }
 
-        .contact-input:focus {
-            border-color: var(--accent-blue);
-            box-shadow: 0 0 20px rgba(59, 130, 246, 0.2);
-        }
-
-        .vs-badge {
-            background: linear-gradient(180deg, #3b82f6 0%, #1e3a8a 100%);
-            width: 100px; height: 100px;
-            display: flex; align-items: center; justify-content: center;
-            border-radius: 50%;
-            font-weight: 950; color: white;
-            border: 8px solid var(--dark-blue);
-            box-shadow: 0 0 40px rgba(59, 130, 246, 0.5);
-            z-index: 10;
+        @media (max-width: 768px) {
+            .mural-card { padding: 1.5rem; }
+            h1 { font-size: 3.5rem !important; }
         }
     </style>
 </head>
-<body class="min-h-screen">
+<body>
 
     <div class="bg-glow" id="parallax-bg"></div>
 
-    <!-- Liquid Mobile Menu Overlay -->
+    <div id="neural-loader">
+        <div class="w-24 h-24 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+        <p class="mt-8 text-blue-500 font-black uppercase tracking-[0.5em] animate-pulse">Syncing Neural Link</p>
+    </div>
+
     <div id="mobile-menu-overlay">
         <div class="flex flex-col items-center">
             <div onclick="navTo('home')" class="menu-item">Home<span>EXPLORE</span></div>
             <div onclick="navTo('vision')" class="menu-item">Vision<span>MANIFESTO</span></div>
-            <div onclick="navTo('battle')" class="menu-item">AI 1v1<span>COLOSSEUM</span></div>
+            <div onclick="navTo('battle')" class="menu-item">Arena<span>COLOSSEUM</span></div>
             <div onclick="navTo('contact')" class="menu-item">Contact<span>UPLINK</span></div>
-        </div>
-        <div class="absolute bottom-20 flex gap-8 text-2xl text-slate-500">
-            <i class="fab fa-x-twitter hover:text-white cursor-pointer"></i>
-            <i class="fab fa-github hover:text-white cursor-pointer"></i>
-            <i class="fab fa-discord hover:text-white cursor-pointer"></i>
         </div>
     </div>
 
-    <!-- Navbar -->
-    <header class="max-w-7xl mx-auto px-4 py-6 lg:py-12 relative z-[1001]">
-        <nav class="nav-glass px-6 lg:px-12 py-4 lg:py-6 flex justify-between items-center">
+    <header class="max-w-7xl mx-auto px-4 py-8 relative z-[1001]">
+        <nav class="nav-glass px-6 py-5 flex justify-between items-center">
             <div onclick="showPage('home')" class="flex items-center gap-4 cursor-pointer group">
-                <div class="w-14 h-14 lg:w-16 lg:h-16 bg-blue-600 rounded-2xl flex items-center justify-center shadow-2xl group-hover:scale-110 transition-transform">
-                    <i class="fas fa-brain text-white text-2xl lg:text-3xl"></i>
+                <div class="w-14 h-14 bg-blue-600 rounded-2xl flex items-center justify-center shadow-2xl group-hover:scale-110 transition-transform">
+                    <i class="fas fa-brain text-white text-2xl" style="filter: drop-shadow(0 0 8px white);"></i>
                 </div>
                 <div class="flex flex-col leading-none">
-                    <span class="text-2xl lg:text-3xl font-black text-white tracking-tighter uppercase">Find My AI</span>
-                    <span class="text-[0.6rem] lg:text-[0.65rem] uppercase tracking-[0.4em] text-blue-400 font-black">Hallow Productions</span>
+                    <span class="text-2xl font-black text-white tracking-tighter uppercase">Find My AI</span>
+                    <span class="text-[0.6rem] uppercase tracking-[0.4em] text-blue-400 font-black">Hallow Productions</span>
                 </div>
             </div>
 
-            <!-- Desktop Nav -->
-            <div class="hidden lg:flex gap-14 text-sm font-black uppercase items-center">
+            <div class="hidden lg:flex gap-12 text-sm font-black uppercase items-center">
                 <div onclick="showPage('home')" class="nav-link active" id="nav-home">Home</div>
                 <div onclick="showPage('vision')" class="nav-link" id="nav-vision">Vision</div>
                 <div onclick="showPage('battle')" class="nav-link" id="nav-battle">AI 1v1</div>
@@ -307,7 +303,6 @@
                 </button>
             </div>
 
-            <!-- Animated Hamburger -->
             <div id="menu-trigger" class="lg:hidden menu-btn" onclick="toggleMenu()">
                 <div class="hamburger-inner"></div>
             </div>
@@ -316,20 +311,20 @@
 
     <main class="max-w-7xl mx-auto px-6 lg:px-12 pb-24">
         
-        <!-- HOME PAGE -->
         <div id="view-home" class="page-view active">
             <section class="text-center py-16 lg:py-32">
-                <h1 class="text-6xl md:text-9xl font-black text-white mb-10 leading-[1.05] max-w-6xl mx-auto tracking-tight">
+                <h1 class="text-6xl md:text-9xl font-black text-white mb-10 leading-[1.05] tracking-tight">
                     Offload the busy work to <span class="highlight-you">be you</span>.
                 </h1>
 
-                <div class="max-w-4xl mx-auto mb-20 p-2 bg-gradient-to-r from-blue-600 via-cyan-400 to-indigo-600 rounded-[30px] lg:rounded-[50px] shadow-2xl">
-                    <div class="bg-slate-950 rounded-[28px] lg:rounded-[48px] p-4 flex flex-col md:flex-row gap-4">
-                        <div class="flex-1 flex items-center px-6 lg:px-8">
+                <div class="max-w-4xl mx-auto mb-20 p-1 bg-gradient-to-r from-blue-600 via-cyan-400 to-indigo-600 rounded-[30px] lg:rounded-[50px]">
+                    <div class="bg-slate-950 rounded-[28px] lg:rounded-[48px] p-3 flex flex-col md:flex-row gap-4">
+                        <div class="flex-1 flex items-center px-6">
                             <i class="fas fa-bolt text-blue-400 text-3xl mr-4"></i>
-                            <input type="text" id="main-search-input" placeholder="What task are we automating?" class="bg-transparent border-none outline-none text-white w-full py-4 text-2xl placeholder:text-slate-700 font-bold">
+                            <input type="text" id="main-search-input" placeholder="What task are we automating?" 
+                                   class="bg-transparent border-none outline-none text-white w-full py-4 text-2xl placeholder:text-slate-800 font-bold">
                         </div>
-                        <button class="btn-3d" onclick="handleSearch()">
+                        <button class="btn-3d" onclick="initiateSearch()">
                             <span class="btn-3d-shadow"></span>
                             <span class="btn-3d-edge"></span>
                             <span class="btn-3d-front px-12 py-5">Find My Match</span>
@@ -337,150 +332,107 @@
                     </div>
                 </div>
 
-                <div id="search-status" class="hidden mb-16 text-blue-400 font-black italic animate-pulse text-3xl uppercase tracking-tighter">Initializing Neural Link...</div>
-
-                <div class="grid md:grid-cols-2 gap-8 lg:gap-12">
+                <div class="grid md:grid-cols-2 gap-10">
                     <div class="mural-card cursor-pointer group" onclick="showPage('vision')">
                         <div class="flex justify-between items-start mb-6">
-                            <h3 class="text-4xl lg:text-5xl font-black text-white uppercase italic leading-none">Our Vision</h3>
-                            <i class="fas fa-eye text-blue-500 text-4xl group-hover:rotate-12 transition-transform"></i>
+                            <h3 class="text-4xl font-black text-white uppercase italic">Our Vision</h3>
+                            <i class="fas fa-eye text-blue-500 text-3xl"></i>
                         </div>
-                        <p class="text-slate-400 text-xl mb-10 leading-relaxed">AI adoption shouldn't be a chore. We believe in finding a digital extension of your own human potential.</p>
-                        <span class="text-blue-500 font-black uppercase text-base tracking-[0.2em] flex items-center gap-3">The Blueprint <i class="fas fa-arrow-right-long group-hover:translate-x-2 transition-transform"></i></span>
+                        <p class="text-slate-400 text-xl mb-8">AI adoption shouldn't be a chore. We find the digital extension of your human potential.</p>
+                        <span class="text-blue-500 font-black uppercase text-sm tracking-widest">Blueprint <i class="fas fa-arrow-right ml-2"></i></span>
                     </div>
                     <div class="mural-card cursor-pointer group" onclick="showPage('battle')">
                         <div class="flex justify-between items-start mb-6">
-                            <h3 class="text-4xl lg:text-5xl font-black text-white uppercase italic leading-none">Battle Arena</h3>
-                            <i class="fas fa-hand-fist text-indigo-500 text-4xl group-hover:scale-125 transition-transform"></i>
+                            <h3 class="text-4xl font-black text-white uppercase italic">Battle Arena</h3>
+                            <i class="fas fa-hand-fist text-indigo-500 text-3xl"></i>
                         </div>
-                        <p class="text-slate-400 text-xl mb-10 leading-relaxed">Stop reading benchmarks. Watch the world's most powerful LLMs settle it live in the binary trenches.</p>
-                        <span class="text-indigo-500 font-black uppercase text-base tracking-[0.2em] flex items-center gap-3">Enter Arena <i class="fas fa-arrow-right-long group-hover:translate-x-2 transition-transform"></i></span>
+                        <p class="text-slate-400 text-xl mb-8">Stop reading benchmarks. Watch the world's most powerful LLMs settle it live.</p>
+                        <span class="text-indigo-500 font-black uppercase text-sm tracking-widest">Enter Arena <i class="fas fa-arrow-right ml-2"></i></span>
                     </div>
                 </div>
             </section>
         </div>
 
-        <!-- VISION PAGE -->
-        <div id="view-vision" class="page-view">
-            <section class="py-16 lg:py-24 text-center">
-                <h2 class="text-7xl lg:text-[12rem] font-black mb-6 uppercase tracking-tighter text-white">The <span class="text-blue-600">Soul</span></h2>
-                <p class="text-slate-400 text-2xl lg:text-4xl max-w-4xl mx-auto font-medium mb-20">Finding the right AI isn't just a search—it's a partnership that amplifies you.</p>
-            </section>
-
-            <div class="mural-card py-12 lg:py-24">
-                <div class="grid lg:grid-cols-2 gap-20 items-center">
-                    <div class="flex justify-center">
-                        <div class="relative group">
-                            <div class="absolute -inset-8 bg-blue-500 rounded-[50px] opacity-20 blur-3xl group-hover:opacity-40 transition-opacity"></div>
-                            <div class="w-72 h-72 lg:w-[500px] lg:h-[500px] bg-slate-900 rounded-[48px] flex items-center justify-center border-4 border-white/5 shadow-2xl relative">
-                                <i class="fas fa-dog text-9xl lg:text-[15rem] text-blue-500 drop-shadow-[0_0_40px_rgba(59,130,246,0.6)]"></i>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="space-y-10 text-left">
-                        <h3 class="text-5xl lg:text-7xl font-black text-white uppercase italic">Digital Companions</h3>
-                        <p class="text-slate-300 text-2xl lg:text-3xl leading-relaxed">Every AI model has a "temperament"—some are creative dreamers, others are logical assassins. We index the soul of the machine.</p>
-                        <div class="flex flex-wrap gap-6">
-                            <div class="px-8 py-5 bg-blue-600/10 rounded-2xl border border-blue-500/20 flex items-center gap-4">
-                                <i class="fas fa-check-circle text-blue-500 text-2xl"></i>
-                                <span class="text-white font-black text-xl">LOYALTY</span>
-                            </div>
-                            <div class="px-8 py-5 bg-indigo-600/10 rounded-2xl border border-indigo-500/20 flex items-center gap-4">
-                                <i class="fas fa-bolt text-indigo-400 text-2xl"></i>
-                                <span class="text-white font-black text-xl">PRECISION</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- BATTLE ARENA -->
         <div id="view-battle" class="page-view">
             <section class="py-16">
-                <div class="text-center mb-20">
-                    <h2 class="text-8xl lg:text-[10rem] font-black uppercase tracking-tighter text-white">ARENA</h2>
-                    <p class="text-blue-500 font-black tracking-[1em] uppercase text-sm mt-4">Automated Benchmark Analysis</p>
+                <div class="text-center mb-16">
+                    <h2 class="text-7xl lg:text-[10rem] font-black uppercase tracking-tighter text-white">ARENA</h2>
+                    <p class="text-blue-500 font-black tracking-[1em] uppercase text-sm mt-4">Benchmark Comparison</p>
                 </div>
-
                 <div class="max-w-6xl mx-auto relative">
-                    <div class="flex flex-col lg:flex-row items-center justify-between gap-12 lg:gap-20">
-                        <div class="w-full lg:flex-1 mural-card relative">
-                            <span class="absolute -top-3 left-10 bg-blue-600 text-white text-[0.6rem] font-black px-4 py-1 rounded-full uppercase tracking-widest">Contender A</span>
-                            <input type="text" id="ai-1" placeholder="GPT-4o" class="contact-input text-3xl font-black placeholder:text-slate-800">
+                    <div class="flex flex-col lg:flex-row items-center justify-between gap-8 lg:gap-16">
+                        <div class="w-full lg:flex-1 mural-card">
+                            <input type="text" id="ai-1" placeholder="GPT-4o" class="contact-input text-3xl font-black text-center">
                         </div>
-
-                        <div class="vs-badge shrink-0 text-4xl italic">VS</div>
-
-                        <div class="w-full lg:flex-1 mural-card relative">
-                            <span class="absolute -top-3 left-10 bg-indigo-600 text-white text-[0.6rem] font-black px-4 py-1 rounded-full uppercase tracking-widest">Contender B</span>
-                            <input type="text" id="ai-2" placeholder="Claude 3.5" class="contact-input text-3xl font-black placeholder:text-slate-800">
+                        <div class="vs-badge shrink-0 text-3xl">VS</div>
+                        <div class="w-full lg:flex-1 mural-card">
+                            <input type="text" id="ai-2" placeholder="Claude 3.5" class="contact-input text-3xl font-black text-center">
                         </div>
                     </div>
-
-                    <div id="battle-results" class="hidden mt-16 mural-card bg-blue-600/5 border-blue-500/30 p-12 lg:p-24">
-                        <div class="flex flex-col lg:flex-row items-center gap-20">
+                    
+                    <div id="battle-results" class="hidden mt-16 mural-card bg-blue-600/5 border-blue-500/30 p-12 lg:p-20">
+                        <div class="flex flex-col lg:flex-row items-center gap-12">
                             <div class="flex-1 text-center lg:text-left">
-                                <span class="text-blue-500 font-black tracking-widest text-lg mb-4 block uppercase">The Dominant Model</span>
-                                <h3 id="winner-name" class="text-6xl lg:text-[7rem] font-black text-white mb-6 uppercase italic tracking-tighter leading-none">WINNER</h3>
-                                <div id="verdict-reasons" class="space-y-6 text-slate-300 text-2xl font-medium"></div>
+                                <span class="text-blue-500 font-black tracking-widest text-sm block uppercase mb-4">Winner Detected</span>
+                                <h3 id="winner-name" class="text-6xl lg:text-8xl font-black text-white uppercase italic tracking-tighter leading-none mb-6">WINNER</h3>
+                                <p id="verdict" class="text-2xl text-slate-300">Outperforms in creative reasoning and logic density by 14%.</p>
                             </div>
-                            <div class="w-64 h-64 lg:w-80 lg:h-80 rounded-full border-[15px] border-blue-600 flex flex-col items-center justify-center bg-slate-950 shadow-[0_0_80px_rgba(37,99,235,0.4)]">
-                                <span class="text-7xl lg:text-9xl font-black text-white" id="winner-score">--</span>
-                                <span class="text-sm font-black text-blue-400 mt-2 tracking-widest">STRENGTH</span>
+                            <div class="w-56 h-56 rounded-full border-[10px] border-blue-600 flex flex-col items-center justify-center bg-slate-950 shadow-[0_0_60px_rgba(59,130,246,0.3)]">
+                                <span class="text-6xl font-black text-white" id="winner-score">98</span>
+                                <span class="text-xs font-black text-blue-400 uppercase">Power Index</span>
                             </div>
-                        </div>
-                        <div class="mt-16 pt-12 border-t border-white/5 flex justify-center">
-                            <button onclick="resetArena()" class="text-blue-500 font-black uppercase text-xl flex items-center gap-4 hover:text-white transition-colors">
-                                <i class="fas fa-rotate"></i> RE-SYNC PARAMETERS
-                            </button>
                         </div>
                     </div>
 
-                    <div class="text-center mt-20" id="arena-btn-container">
-                        <button class="btn-3d" onclick="runBattle()">
+                    <div class="text-center mt-12" id="battle-btn-box">
+                        <button class="btn-3d" onclick="executeBattle()">
                             <span class="btn-3d-shadow"></span>
                             <span class="btn-3d-edge"></span>
-                            <span class="btn-3d-front px-20 py-8 text-3xl italic">INITIATE ANALYSIS</span>
+                            <span class="btn-3d-front px-20 py-6 text-2xl font-black italic">INITIATE CLASH</span>
                         </button>
                     </div>
                 </div>
             </section>
         </div>
 
-        <!-- CONTACT PAGE -->
+        <div id="view-vision" class="page-view">
+            <section class="py-16 text-center">
+                <h2 class="text-6xl lg:text-[9rem] font-black mb-6 uppercase tracking-tighter text-white">THE SOUL</h2>
+                <div class="mural-card max-w-5xl mx-auto py-16 lg:py-24">
+                    <div class="grid lg:grid-cols-2 gap-16 items-center">
+                        <div class="relative group">
+                            <div class="absolute -inset-4 bg-blue-500 rounded-[40px] opacity-10 blur-2xl"></div>
+                            <div class="w-full aspect-square bg-slate-900 rounded-[40px] flex items-center justify-center border border-white/5 relative">
+                                <i class="fas fa-microchip text-9xl text-blue-600 drop-shadow-[0_0_30px_rgba(59,130,246,0.5)]"></i>
+                            </div>
+                        </div>
+                        <div class="text-left space-y-8">
+                            <h3 class="text-5xl font-black text-white uppercase italic">Digital Empathy</h3>
+                            <p class="text-2xl text-slate-400 leading-relaxed">We index the temperament of AI models. Some are poets, some are architects, some are soldiers. We find your frequency.</p>
+                            <div class="flex gap-4">
+                                <div class="px-6 py-3 bg-blue-500/10 border border-blue-500/20 rounded-xl text-white font-black">LOGIC</div>
+                                <div class="px-6 py-3 bg-indigo-500/10 border border-indigo-500/20 rounded-xl text-white font-black">CREATIVITY</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
         <div id="view-contact" class="page-view">
             <section class="max-w-4xl mx-auto py-16">
-                <div class="text-center mb-16">
-                    <h2 class="text-7xl lg:text-[10rem] font-black mb-4 uppercase tracking-tighter text-white">Uplink</h2>
-                    <p class="text-slate-400 text-3xl font-medium">Direct communication with the Hallow Core.</p>
-                </div>
-                
-                <div class="mural-card p-10 lg:p-20">
-                    <form id="contact-form" onsubmit="handleContactSubmit(event)" class="space-y-10">
-                        <div id="success-msg" class="hidden text-center p-16 bg-blue-600 rounded-3xl text-white shadow-2xl">
-                            <i class="fas fa-tower-broadcast text-7xl mb-6 animate-pulse"></i>
-                            <h3 class="text-4xl font-black uppercase italic">Transmission Secure</h3>
-                            <p class="mt-4 text-xl font-medium opacity-80">We've received your frequency. Stand by for decryption.</p>
+                <h2 class="text-7xl lg:text-[9rem] font-black text-white text-center mb-12 uppercase tracking-tighter">UPLINK</h2>
+                <div class="mural-card p-10 lg:p-16">
+                    <form onsubmit="event.preventDefault(); alert('Signal Sent');" class="space-y-8">
+                        <div class="grid md:grid-cols-2 gap-8">
+                            <input type="text" placeholder="Full Name" class="contact-input font-bold" required>
+                            <input type="email" placeholder="Email Address" class="contact-input font-bold" required>
                         </div>
-                        <div class="grid md:grid-cols-2 gap-10">
-                            <div class="space-y-4">
-                                <label class="text-[0.6rem] font-black uppercase tracking-[0.4em] text-blue-500 ml-4">Identification</label>
-                                <input type="text" required placeholder="Name / Organization" class="contact-input text-2xl font-bold">
-                            </div>
-                            <div class="space-y-4">
-                                <label class="text-[0.6rem] font-black uppercase tracking-[0.4em] text-blue-500 ml-4">Digital Address</label>
-                                <input type="email" required placeholder="mail@domain.com" class="contact-input text-2xl font-bold">
-                            </div>
-                        </div>
-                        <div class="space-y-4">
-                            <label class="text-[0.6rem] font-black uppercase tracking-[0.4em] text-blue-500 ml-4">The Payload</label>
-                            <textarea rows="5" required placeholder="What are we building together?" class="contact-input text-2xl font-bold"></textarea>
-                        </div>
+                        <textarea placeholder="The message for the future..." rows="5" class="contact-input font-bold" required></textarea>
                         <button type="submit" class="btn-3d w-full">
                             <span class="btn-3d-shadow"></span>
                             <span class="btn-3d-edge"></span>
-                            <span class="btn-3d-front py-8 text-3xl font-black italic">SEND FREQUENCY</span>
+                            <span class="btn-3d-front py-8 text-3xl font-black italic tracking-widest">SEND FREQUENCY</span>
                         </button>
                     </form>
                 </div>
@@ -489,27 +441,20 @@
 
     </main>
 
-    <footer class="py-24 border-t border-white/5 bg-slate-950/80 text-center relative overflow-hidden">
-        <div class="max-w-7xl mx-auto px-6 flex flex-col items-center gap-14">
-            <div class="flex items-center gap-6">
-                <div class="w-14 h-14 bg-blue-600 rounded-2xl flex items-center justify-center shadow-lg"><i class="fas fa-brain text-white text-2xl"></i></div>
-                <span class="text-4xl font-black text-white tracking-tighter">FIND MY AI</span>
+    <footer class="py-20 border-t border-white/5 text-center">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="flex items-center justify-center gap-4 mb-10">
+                <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center"><i class="fas fa-brain text-white text-sm"></i></div>
+                <span class="text-2xl font-black text-white uppercase tracking-tighter">Find My AI</span>
             </div>
-            <div class="flex gap-14 text-5xl text-slate-600">
-                <a href="#" class="hover:text-blue-500 transition-colors"><i class="fab fa-x-twitter"></i></a>
-                <a href="#" class="hover:text-blue-500 transition-colors"><i class="fab fa-github"></i></a>
-                <a href="#" class="hover:text-blue-500 transition-colors"><i class="fab fa-discord"></i></a>
-            </div>
-            <div class="space-y-3">
-                <p class="text-blue-500/40 text-[0.7rem] font-black tracking-[0.8em] uppercase">Intelligence Orchestration for the 21st Century</p>
-                <p class="text-slate-800 text-[0.6rem] font-bold uppercase">&copy; 2026 HALLOW PRODUCTIONS | SYNCED WORLDWIDE</p>
-            </div>
+            <p class="text-slate-600 text-xs font-black uppercase tracking-[0.5em]">&copy; 2026 Hallow Productions | All Rights Reserved</p>
         </div>
     </footer>
 
     <script>
         let isMenuOpen = false;
 
+        // --- MOBILE MENU ---
         function toggleMenu() {
             const overlay = document.getElementById('mobile-menu-overlay');
             const trigger = document.getElementById('menu-trigger');
@@ -518,164 +463,95 @@
                 isMenuOpen = true;
                 trigger.classList.add('active');
                 overlay.style.display = 'flex';
-                
-                gsap.to(overlay, {
-                    clipPath: 'circle(150% at 90% 5%)',
-                    duration: 1,
-                    ease: "expo.inOut"
-                });
-
-                gsap.fromTo('.menu-item', 
-                    { x: 100, opacity: 0 }, 
-                    { x: 0, opacity: 1, stagger: 0.1, duration: 0.8, delay: 0.4, ease: "power4.out" }
-                );
-
-                gsap.fromTo('.menu-item span', 
-                    { x: -50, opacity: 0 }, 
-                    { x: 0, opacity: 0.05, stagger: 0.1, duration: 1.2, delay: 0.6, ease: "power2.out" }
-                );
-                
+                gsap.to(overlay, { clipPath: 'circle(150% at 90% 5%)', duration: 1, ease: "expo.inOut" });
+                gsap.from('.menu-item', { opacity: 0, x: 50, stagger: 0.1, duration: 0.8, delay: 0.3, ease: "power4.out" });
                 document.body.style.overflow = 'hidden';
             } else {
-                closeMenu();
+                isMenuOpen = false;
+                trigger.classList.remove('active');
+                gsap.to(overlay, { 
+                    clipPath: 'circle(0% at 90% 5%)', duration: 0.8, ease: "expo.inOut",
+                    onComplete: () => { overlay.style.display = 'none'; document.body.style.overflow = 'auto'; }
+                });
             }
         }
 
-        function closeMenu() {
-            const overlay = document.getElementById('mobile-menu-overlay');
-            const trigger = document.getElementById('menu-trigger');
-            isMenuOpen = false;
-            trigger.classList.remove('active');
+        function navTo(id) { toggleMenu(); setTimeout(() => showPage(id), 600); }
 
-            gsap.to('.menu-item', { x: -50, opacity: 0, stagger: 0.05, duration: 0.4 });
-            
-            gsap.to(overlay, {
-                clipPath: 'circle(0% at 90% 5%)',
-                duration: 0.8,
-                ease: "expo.inOut",
-                onComplete: () => {
-                    overlay.style.display = 'none';
-                    document.body.style.overflow = 'auto';
-                }
-            });
-        }
-
-        function navTo(pageId) {
-            closeMenu();
-            setTimeout(() => showPage(pageId), 400);
-        }
-
+        // --- PAGE ROUTING ---
         function showPage(pageId) {
             const views = document.querySelectorAll('.page-view');
-            const navLinks = document.querySelectorAll('.nav-link');
-            
-            navLinks.forEach(link => link.classList.remove('active'));
-            const activeLink = document.getElementById(`nav-${pageId}`);
-            if (activeLink) activeLink.classList.add('active');
+            const target = document.getElementById(`view-${pageId}`);
+            if (target.classList.contains('active')) return;
 
-            const targetView = document.getElementById(`view-${pageId}`);
-            if (targetView.classList.contains('active')) return;
+            // Nav link colors
+            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+            const link = document.getElementById(`nav-${pageId}`);
+            if(link) link.classList.add('active');
 
-            gsap.to(views, { opacity: 0, y: 50, duration: 0.4, display: 'none', ease: "power2.in", onComplete: () => {
-                targetView.style.display = 'block';
-                gsap.fromTo(targetView, { opacity: 0, y: 100 }, { opacity: 1, y: 0, duration: 0.8, ease: "power4.out" });
+            // Smooth cross-fade
+            gsap.to(views, { opacity: 0, y: 30, duration: 0.4, display: 'none', onComplete: () => {
+                target.style.display = 'block';
+                gsap.fromTo(target, { opacity: 0, y: 50 }, { opacity: 1, y: 0, duration: 0.8, ease: "expo.out" });
                 views.forEach(v => v.classList.remove('active'));
-                targetView.classList.add('active');
+                target.classList.add('active');
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             }});
         }
 
-        function handleSearch() {
+        // --- SEARCH LOGIC ---
+        function initiateSearch() {
             const input = document.getElementById('main-search-input');
-            const status = document.getElementById('search-status');
-            if(!input.value) {
-                gsap.to(input, { x: 20, duration: 0.1, repeat: 3, yoyo: true });
-                input.focus();
-                return;
-            }
+            if(!input.value) return gsap.to(input, { x: 15, repeat: 3, yoyo: true, duration: 0.05 });
 
-            status.classList.remove('hidden');
-            status.innerText = `Calibrating parameters for: "${input.value}"...`;
+            const loader = document.getElementById('neural-loader');
+            loader.style.display = 'flex';
+            gsap.fromTo(loader, { opacity: 0 }, { opacity: 1, duration: 0.5 });
 
             setTimeout(() => {
-                status.classList.add('hidden');
-                showPage('battle'); 
-                document.getElementById('ai-1').value = input.value;
-                document.getElementById('ai-2').value = "Neural Core Prime";
-                runBattle();
+                gsap.to(loader, { opacity: 0, duration: 0.5, onComplete: () => {
+                    loader.style.display = 'none';
+                    showPage('battle');
+                    document.getElementById('ai-1').value = input.value;
+                    document.getElementById('ai-2').value = "Neural Core V4";
+                    executeBattle();
+                }});
             }, 2000);
         }
 
-        function runBattle() {
-            const ai1 = document.getElementById('ai-1').value || 'Contender A';
-            const ai2 = document.getElementById('ai-2').value || 'Contender B';
+        // --- ARENA BATTLE ---
+        function executeBattle() {
             const results = document.getElementById('battle-results');
-            const winnerTxt = document.getElementById('winner-name');
-            const winnerScore = document.getElementById('winner-score');
-            const reasonsDiv = document.getElementById('verdict-reasons');
-            
-            gsap.to("#arena-btn-container", { opacity: 0, y: 30, duration: 0.3, pointerEvents: 'none' });
+            const btn = document.getElementById('battle-btn-box');
+            const ai1 = document.getElementById('ai-1').value || "Alpha";
+            const ai2 = document.getElementById('ai-2').value || "Beta";
+
+            gsap.to(btn, { opacity: 0, y: 20, duration: 0.3 });
             
             const winner = Math.random() > 0.5 ? ai1 : ai2;
-            const score = Math.floor(Math.random() * (99 - 92 + 1)) + 92;
-            
-            winnerTxt.innerText = winner;
-            winnerScore.innerText = score;
-            
-            const reasons = [
-                "Advanced multi-layered heuristic analysis.",
-                "Zero-latency contextual comprehension.",
-                "Superior creative synthesis vs rigid logic."
-            ];
-            reasonsDiv.innerHTML = reasons.map(r => `<div class="flex items-center gap-6"><i class="fas fa-bolt text-blue-500 text-xl"></i><span>${r}</span></div>`).join('');
-            
+            document.getElementById('winner-name').innerText = winner;
+            document.getElementById('winner-score').innerText = Math.floor(Math.random() * 5) + 95;
+
             results.classList.remove('hidden');
-            gsap.fromTo(results, { opacity: 0, scale: 0.8, y: 100 }, { opacity: 1, scale: 1, y: 0, duration: 1, ease: "elastic.out(1, 0.75)" });
+            gsap.fromTo(results, { opacity: 0, scale: 0.95, y: 40 }, { opacity: 1, scale: 1, y: 0, duration: 1.2, ease: "expo.out" });
         }
 
-        function resetArena() {
-            const results = document.getElementById('battle-results');
-            gsap.to(results, { opacity: 0, y: 50, duration: 0.5, onComplete: () => {
-                results.classList.add('hidden');
-                gsap.to("#arena-btn-container", { opacity: 1, y: 0, duration: 0.5, pointerEvents: 'auto' });
-                document.getElementById('ai-1').value = '';
-                document.getElementById('ai-2').value = '';
-            }});
-        }
-
-        function handleContactSubmit(e) {
-            e.preventDefault();
-            const form = document.getElementById('contact-form');
-            const success = document.getElementById('success-msg');
-            
-            gsap.to(form.querySelectorAll('input, textarea, button, label'), { opacity: 0, y: 30, duration: 0.4, stagger: 0.1, onComplete: () => {
-                success.classList.remove('hidden');
-                gsap.fromTo(success, { opacity: 0, scale: 0.7, rotateX: 60 }, { opacity: 1, scale: 1, rotateX: 0, duration: 1, ease: "back.out(2)" });
-            }});
-        }
-
-        // Parallax & Mouse Interactivity
-        if (window.innerWidth > 1024) {
+        // --- INTERACTIVE PARALLAX ---
+        if(window.innerWidth > 1024) {
             window.addEventListener('mousemove', (e) => {
-                const x = (e.clientX / window.innerWidth - 0.5) * 50;
-                const y = (e.clientY / window.innerHeight - 0.5) * 50;
-                gsap.to("#parallax-bg", { x: x, y: y, duration: 3, ease: "power2.out" });
-                
-                const cards = document.querySelectorAll('.mural-card');
-                cards.forEach(card => {
+                const moveX = (e.clientX / window.innerWidth - 0.5) * 40;
+                const moveY = (e.clientY / window.innerHeight - 0.5) * 40;
+                gsap.to('#parallax-bg', { x: moveX, y: moveY, duration: 2.5, ease: "power2.out" });
+
+                // Card Tilt
+                document.querySelectorAll('.mural-card').forEach(card => {
                     const rect = card.getBoundingClientRect();
-                    const cardX = (e.clientX - rect.left) / rect.width - 0.5;
-                    const cardY = (e.clientY - rect.top) / rect.height - 0.5;
-                    gsap.to(card, { rotationY: cardX * 15, rotationX: -cardY * 15, duration: 0.6 });
+                    const x = ((e.clientX - rect.left) / rect.width) - 0.5;
+                    const y = ((e.clientY - rect.top) / rect.height) - 0.5;
+                    gsap.to(card, { rotateY: x * 10, rotateX: -y * 10, transformPerspective: 1000, duration: 0.5 });
                 });
             });
         }
-
-        window.onload = () => {
-            gsap.from(".nav-glass", { y: -100, opacity: 0, duration: 1.5, ease: "expo.out" });
-            gsap.from("h1", { opacity: 0, y: 100, duration: 1.5, delay: 0.5, ease: "power4.out" });
-            gsap.from(".btn-3d", { scale: 0.5, opacity: 0, duration: 1, delay: 1, stagger: 0.2, ease: "back.out(1.7)" });
-        };
     </script>
 </body>
 </html>
