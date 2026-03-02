@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+  <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -8,6 +8,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 
     <style>
         :root {
@@ -175,21 +176,36 @@
             <div class="max-w-2xl mx-auto">
                 <h2 class="text-5xl font-black text-white mb-4 text-center uppercase italic">The Registry</h2>
                 <div class="mural-card">
-                    <form class="space-y-6" onsubmit="event.preventDefault(); alert('Identity Registered.');">
+                    <form id="registry-form" class="space-y-6" onsubmit="sendEmail(event)">
                         <div class="grid md:grid-cols-2 gap-6">
-                            <div><label class="text-[10px] font-black text-blue-500 uppercase block mb-2">Name</label><input type="text" class="form-input" required></div>
-                            <div><label class="text-[10px] font-black text-blue-500 uppercase block mb-2">Email</label><input type="email" class="form-input" required></div>
+                            <div><label class="text-[10px] font-black text-blue-500 uppercase block mb-2">Name</label>
+                                <input type="text" name="user_name" id="user_name" class="form-input" required>
+                            </div>
+                            <div><label class="text-[10px] font-black text-blue-500 uppercase block mb-2">Email</label>
+                                <input type="email" name="user_email" id="user_email" class="form-input" required>
+                            </div>
                         </div>
                         <div class="grid md:grid-cols-2 gap-6">
                             <div><label class="text-[10px] font-black text-blue-500 uppercase block mb-2">Sector</label>
-                                <select class="form-input"><option>Creator</option><option>Dev</option><option>Enterprise</option></select>
+                                <select name="user_sector" id="user_sector" class="form-input">
+                                    <option>Creator</option>
+                                    <option>Dev</option>
+                                    <option>Enterprise</option>
+                                </select>
                             </div>
                             <div><label class="text-[10px] font-black text-blue-500 uppercase block mb-2">Level</label>
-                                <select class="form-input"><option>Beginner</option><option>Architect</option></select>
+                                <select name="user_level" id="user_level" class="form-input">
+                                    <option>Beginner</option>
+                                    <option>Architect</option>
+                                </select>
                             </div>
                         </div>
-                        <div><label class="text-[10px] font-black text-blue-500 uppercase block mb-2">Bio / Project Link</label><textarea class="form-input h-24" placeholder="Tell us what you're building..."></textarea></div>
-                        <button type="submit" class="btn-3d"><span class="btn-3d-front">AUTHORIZE IDENTITY</span></button>
+                        <div><label class="text-[10px] font-black text-blue-500 uppercase block mb-2">Bio / Project Link</label>
+                            <textarea name="user_bio" id="user_bio" class="form-input h-24" placeholder="Tell us what you're building..."></textarea>
+                        </div>
+                        <button type="submit" class="btn-3d">
+                            <span class="btn-3d-front" id="register-btn">CONTACT US</span>
+                        </button>
                     </form>
                 </div>
             </div>
@@ -198,6 +214,35 @@
     </main>
 
     <script>
+        //   EMAILJS  
+        (function() {
+            emailjs.init("pnvoLUWKYb5eCM9Vd"); 
+        })();
+
+        // 2. SEND EMAIL FUNCTION
+        async function sendEmail(event) {
+            event.preventDefault();
+            const btn = document.getElementById('register-btn');
+            
+            // UI Feedback
+            btn.innerHTML = `<i class="fas fa-circle-notch fa-spin"></i> UPLOADING...`;
+            
+            // These IDs come from your EmailJS Dashboard
+            const serviceID = "service_qp7s5nm";
+            const templateID = "template_gvapege";
+
+            try {
+                await emailjs.sendForm(serviceID, templateID, '#registry-form');
+                alert('IDENTITY REGISTERED: Transmission Received.');
+                document.getElementById('registry-form').reset();
+            } catch (error) {
+                console.error('EmailJS Error:', error);
+                alert('UPLINK FAILED: Check your console for details.');
+            } finally {
+                btn.innerText = "REGISTER";
+            }
+        }
+ 
         function showPage(pageId) {
             document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
             const link = document.getElementById(`nav-${pageId}`);
@@ -246,6 +291,7 @@
             } catch(e) { alert("CONNECTION ERROR: API Busy."); }
             finally { status.classList.add('hidden'); btn.innerText = "EXTRACT MEDIA"; }
         }
+        
 
         function runBattleSim() {
             alert(`ANALYZING: ${document.getElementById('battle-1').value} VS ${document.getElementById('battle-2').value}...\n\nResult: Model 1 has higher reasoning, Model 2 is faster.`);
@@ -261,4 +307,4 @@
         });
     </script>
 </body>
-</html>  
+</html>
